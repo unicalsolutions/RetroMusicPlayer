@@ -14,8 +14,8 @@ android {
         vectorDrawables.useSupportLibrary = true
 
         applicationId "code.name.monkey.retromusic"
-        versionCode 10564
-        versionName '5.7.1'
+        versionCode 1
+        versionName '1.0.0'
 
         buildConfigField("String", "GOOGLE_PLAY_LICENSING_KEY", "\"${getProperty(getProperties('../public.properties'), 'GOOGLE_PLAY_LICENSE_KEY')}\"")
     }
@@ -37,8 +37,8 @@ android {
             signingConfig signingConfigs.release
         }
         debug {
-            applicationIdSuffix '.debug'
-            versionNameSuffix ' DEBUG'
+//            applicationIdSuffix '.debug'
+//            versionNameSuffix ' DEBUG'
         }
     }
 
