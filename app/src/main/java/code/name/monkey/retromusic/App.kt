@@ -85,9 +85,9 @@ class App : Application() {
         }
 
         fun isProVersion(): Boolean {
-            return BuildConfig.DEBUG || instance?.billingProcessor!!.isPurchased(
+            return true || BuildConfig.DEBUG || instance?.billingProcessor!!.isPurchased(
                 PRO_VERSION_PRODUCT_ID
-            )
+            ) // todo always pro
         }
     }
 }

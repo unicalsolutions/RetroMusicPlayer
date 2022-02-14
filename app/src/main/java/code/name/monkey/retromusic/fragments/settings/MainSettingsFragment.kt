@@ -47,7 +47,7 @@ class MainSettingsFragment : Fragment(), View.OnClickListener {
                 R.id.otherSettings -> R.id.action_mainSettingsFragment_to_otherSettingsFragment
                 R.id.aboutSettings -> R.id.action_mainSettingsFragment_to_aboutActivity
                 R.id.nowPlayingSettings -> R.id.action_mainSettingsFragment_to_nowPlayingSettingsFragment
-                R.id.backup_restore_settings -> R.id.action_mainSettingsFragment_to_backupFragment
+//                R.id.backup_restore_settings -> R.id.action_mainSettingsFragment_to_backupFragment
                 else -> R.id.action_mainSettingsFragment_to_themeSettingsFragment
             }
         )
@@ -73,21 +73,21 @@ class MainSettingsFragment : Fragment(), View.OnClickListener {
         binding.notificationSettings.setOnClickListener(this)
         binding.otherSettings.setOnClickListener(this)
         binding.aboutSettings.setOnClickListener(this)
-        binding.backupRestoreSettings.setOnClickListener(this)
+//        binding.backupRestoreSettings.setOnClickListener(this)
 
-        binding.buyProContainer.apply {
-            if (App.isProVersion()) hide() else show()
-            setOnClickListener {
-                NavigationUtil.goToProVersion(requireContext())
-            }
-        }
-        binding.buyPremium.setOnClickListener {
-            NavigationUtil.goToProVersion(requireContext())
-        }
-        ThemeStore.accentColor(requireContext()).let {
-            binding.buyPremium.setTextColor(it)
-            binding.diamondIcon.imageTintList = ColorStateList.valueOf(it)
-        }
+//        binding.buyProContainer.apply {
+//            if (App.isProVersion()) hide() else show()
+//            setOnClickListener {
+//                NavigationUtil.goToProVersion(requireContext())
+//            }
+//        }
+//        binding.buyPremium.setOnClickListener {
+//            NavigationUtil.goToProVersion(requireContext())
+//        }
+//        ThemeStore.accentColor(requireContext()).let {
+//            binding.buyPremium.setTextColor(it)
+//            binding.diamondIcon.imageTintList = ColorStateList.valueOf(it)
+//        }
 
         binding.container.drawAboveSystemBarsWithPadding()
     }

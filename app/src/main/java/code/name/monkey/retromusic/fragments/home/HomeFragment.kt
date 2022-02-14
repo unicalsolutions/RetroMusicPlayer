@@ -67,7 +67,7 @@ class HomeFragment :
         mainActivity.setSupportActionBar(binding.toolbar)
         mainActivity.supportActionBar?.title = null
         setupListeners()
-        binding.titleWelcome.text = String.format("%s", PreferenceUtil.userName)
+//        binding.titleWelcome.text = String.format("%s", PreferenceUtil.userName)
 
         enterTransition = MaterialFadeThrough().addTarget(binding.contentContainer)
         reenterTransition = MaterialFadeThrough().addTarget(binding.contentContainer)
@@ -78,7 +78,7 @@ class HomeFragment :
             adapter = homeAdapter
         }
         libraryViewModel.getHome().observe(viewLifecycleOwner) {
-            homeAdapter.swapData(it)
+//            homeAdapter.swapData(it)
         }
         libraryViewModel.getSuggestions().observe(viewLifecycleOwner) {
             loadSuggestions(it)
@@ -114,14 +114,14 @@ class HomeFragment :
     }
 
     private fun setupListeners() {
-        binding.bannerImage?.setOnClickListener {
-            findNavController().navigate(
-                R.id.user_info_fragment, null, null, FragmentNavigatorExtras(
-                    binding.userImage to "user_image"
-                )
-            )
-            reenterTransition = null
-        }
+//        binding.bannerImage?.setOnClickListener {
+//            findNavController().navigate(
+//                R.id.user_info_fragment, null, null, FragmentNavigatorExtras(
+//                    binding.userImage to "user_image"
+//                )
+//            )
+//            reenterTransition = null
+//        }
 
         binding.lastAdded.setOnClickListener {
             findNavController().navigate(
@@ -151,19 +151,19 @@ class HomeFragment :
             setSharedAxisYTransitions()
         }
 
-        binding.userImage.setOnClickListener {
-            findNavController().navigate(
-                R.id.user_info_fragment, null, null, FragmentNavigatorExtras(
-                    binding.userImage to "user_image"
-                )
-            )
-        }
-        // Reload suggestions
-        binding.suggestions.refreshButton.setOnClickListener {
-            libraryViewModel.forceReload(
-                ReloadType.Suggestions
-            )
-        }
+//        binding.userImage.setOnClickListener {
+//            findNavController().navigate(
+//                R.id.user_info_fragment, null, null, FragmentNavigatorExtras(
+//                    binding.userImage to "user_image"
+//                )
+//            )
+//        }
+//        // Reload suggestions
+//        binding.suggestions.refreshButton.setOnClickListener {
+//            libraryViewModel.forceReload(
+//                ReloadType.Suggestions
+//            )
+//        }
     }
 
     private fun setupTitle() {
@@ -172,24 +172,24 @@ class HomeFragment :
         }
         val hexColor = String.format("#%06X", 0xFFFFFF and accentColor())
         val appName = HtmlCompat.fromHtml(
-            "Retro <span  style='color:$hexColor';>Music</span>",
+            "Unical <span  style='color:$hexColor';>Music</span>",
             HtmlCompat.FROM_HTML_MODE_COMPACT
         )
         binding.appNameText.text = appName
     }
 
     private fun loadProfile() {
-        binding.bannerImage?.let {
-            GlideApp.with(requireContext())
-                .asBitmap()
-                .profileBannerOptions(RetroGlideExtension.getBannerModel())
-                .load(RetroGlideExtension.getBannerModel())
-                .into(it)
-        }
-        GlideApp.with(requireActivity()).asBitmap()
-            .userProfileOptions(RetroGlideExtension.getUserModel())
-            .load(RetroGlideExtension.getUserModel())
-            .into(binding.userImage)
+//        binding.bannerImage?.let {
+//            GlideApp.with(requireContext())
+//                .asBitmap()
+//                .profileBannerOptions(RetroGlideExtension.getBannerModel())
+//                .load(RetroGlideExtension.getBannerModel())
+//                .into(it)
+//        }
+//        GlideApp.with(requireActivity()).asBitmap()
+//            .userProfileOptions(RetroGlideExtension.getUserModel())
+//            .load(RetroGlideExtension.getUserModel())
+//            .into(binding.userImage)
     }
 
     fun colorButtons() {
@@ -237,47 +237,47 @@ class HomeFragment :
 
     private fun loadSuggestions(songs: List<Song>) {
         if (songs.isEmpty()) {
-            binding.suggestions.root.isVisible = false
+//            binding.suggestions.root.isVisible = false
             return
         }
-        val images = listOf(
-            binding.suggestions.image1,
-            binding.suggestions.image2,
-            binding.suggestions.image3,
-            binding.suggestions.image4,
-            binding.suggestions.image5,
-            binding.suggestions.image6,
-            binding.suggestions.image7,
-            binding.suggestions.image8
-        )
+//        val images = listOf(
+//            binding.suggestions.image1,
+//            binding.suggestions.image2,
+//            binding.suggestions.image3,
+//            binding.suggestions.image4,
+//            binding.suggestions.image5,
+//            binding.suggestions.image6,
+//            binding.suggestions.image7,
+//            binding.suggestions.image8
+//        )
         val color = ThemeStore.accentColor(requireContext())
-        binding.suggestions.message.apply {
-            setTextColor(color)
-            setOnClickListener {
-                it.isClickable = false
-                it.postDelayed({ it.isClickable = true }, 500)
-                MusicPlayerRemote.playNext(songs.subList(0, 8))
-                if (!MusicPlayerRemote.isPlaying) {
-                    MusicPlayerRemote.playNextSong()
-                }
-            }
-        }
-        binding.suggestions.card6.setCardBackgroundColor(ColorUtil.withAlpha(color, 0.12f))
-        images.forEachIndexed { index, imageView ->
-            imageView.setOnClickListener {
-                it.isClickable = false
-                it.postDelayed({ it.isClickable = true }, 500)
-                MusicPlayerRemote.playNext(songs[index])
-                if (!MusicPlayerRemote.isPlaying) {
-                    MusicPlayerRemote.playNextSong()
-                }
-            }
-            GlideApp.with(this)
-                .asBitmap()
-                .songCoverOptions(songs[index])
-                .load(RetroGlideExtension.getSongModel(songs[index]))
-                .into(imageView)
-        }
+//        binding.suggestions.message.apply {
+//            setTextColor(color)
+//            setOnClickListener {
+//                it.isClickable = false
+//                it.postDelayed({ it.isClickable = true }, 500)
+//                MusicPlayerRemote.playNext(songs.subList(0, 8))
+//                if (!MusicPlayerRemote.isPlaying) {
+//                    MusicPlayerRemote.playNextSong()
+//                }
+//            }
+//        }
+//        binding.suggestions.card6.setCardBackgroundColor(ColorUtil.withAlpha(color, 0.12f))
+//        images.forEachIndexed { index, imageView ->
+//            imageView.setOnClickListener {
+//                it.isClickable = false
+//                it.postDelayed({ it.isClickable = true }, 500)
+//                MusicPlayerRemote.playNext(songs[index])
+//                if (!MusicPlayerRemote.isPlaying) {
+//                    MusicPlayerRemote.playNextSong()
+//                }
+//            }
+//            GlideApp.with(this)
+//                .asBitmap()
+//                .songCoverOptions(songs[index])
+//                .load(RetroGlideExtension.getSongModel(songs[index]))
+//                .into(imageView)
+//        }
     }
 
     companion object {

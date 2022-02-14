@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <include android:id="@+id/suggestions" layout="@layout/item_suggestions" />
+<!--        <include android:id="@+id/suggestions" layout="@layout/item_suggestions" />-->
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
