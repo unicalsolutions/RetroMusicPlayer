@@ -4,15 +4,16 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
 import android.graphics.Paint.ANTI_ALIAS_FLAG
+import android.media.MediaPlayer
 import android.util.AttributeSet
 import android.view.View
-import android.view.animation.LinearInterpolator
+import android.view.animation.*
 import code.name.monkey.appthemehelper.ThemeStore
-import code.name.monkey.appthemehelper.util.ColorUtil
 import code.name.monkey.retromusic.R
+import code.name.monkey.retromusic.helper.MusicPlayerRemote
+import code.name.monkey.retromusic.util.MusicUtil
 import code.name.monkey.retromusic.util.TiltListener
 import code.name.monkey.retromusic.util.WaveTiltSensor
-import code.name.monkey.retromusic.util.theme.ThemeManager
 import kotlin.math.cos
 import kotlin.math.hypot
 import kotlin.math.sin
@@ -114,7 +115,7 @@ class WavesView @JvmOverloads constructor(
             duration = 1500L
             repeatMode = ValueAnimator.RESTART
             repeatCount = ValueAnimator.INFINITE
-            interpolator = LinearInterpolator()
+            interpolator = BounceInterpolator()
 //            start()
         }
         tiltSensor.addListener(this)
@@ -143,6 +144,7 @@ class WavesView @JvmOverloads constructor(
         super.onDraw(canvas)
 
         //draw circles separated by a space the size of waveGap
+
         var currentRadius = initialRadius + waveRadiusOffset
         while (currentRadius < maxRadius) {
             canvas.drawCircle(center.x, center.y, currentRadius, wavePaint)
