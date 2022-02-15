@@ -30,13 +30,14 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-<!--        <include android:id="@+id/suggestions" layout="@layout/item_suggestions" />-->
+        <!--        <include android:id="@+id/suggestions" layout="@layout/item_suggestions" />-->
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:nestedScrollingEnabled="false"
+            android:orientation="vertical"
             android:overScrollMode="@integer/overScrollMode"
             tools:itemCount="10"
             tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"

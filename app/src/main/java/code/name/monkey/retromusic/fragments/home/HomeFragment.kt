@@ -15,6 +15,7 @@
 package code.name.monkey.retromusic.fragments.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -78,7 +79,8 @@ class HomeFragment :
             adapter = homeAdapter
         }
         libraryViewModel.getHome().observe(viewLifecycleOwner) {
-//            homeAdapter.swapData(it)
+            Log.d("TAGGG", "onViewCreated: $it")
+            homeAdapter.swapData(it)
         }
         libraryViewModel.getSuggestions().observe(viewLifecycleOwner) {
             loadSuggestions(it)
@@ -103,14 +105,13 @@ class HomeFragment :
 
     private fun adjustPlaylistButtons() {
         val buttons =
-            listOf(binding.history, binding.lastAdded, binding.topPlayed, binding.actionShuffle)
-        buttons.maxOf { it.lineCount }.let { maxLineCount ->
-            buttons.forEach { button ->
-                // Set the highest line count to every button for consistency
-                button.setLines(maxLineCount)
-            }
-        }
-
+            listOf(binding.actionShuffle)
+//        buttons.maxOf { it.lineCount }.let { maxLineCount ->
+//            buttons.forEach { button ->
+//                // Set the highest line count to every button for consistency
+//                button.setLines(maxLineCount)
+//            }
+//        }
     }
 
     private fun setupListeners() {
@@ -123,33 +124,39 @@ class HomeFragment :
 //            reenterTransition = null
 //        }
 
-        binding.lastAdded.setOnClickListener {
-            findNavController().navigate(
-                R.id.detailListFragment,
-                bundleOf(EXTRA_PLAYLIST_TYPE to LAST_ADDED_PLAYLIST)
-            )
-            setSharedAxisYTransitions()
-        }
+//        binding.lastAdded.setOnClickListener {
+//            findNavController().navigate(
+//                R.id.detailListFragment,
+//                bundleOf(EXTRA_PLAYLIST_TYPE to LAST_ADDED_PLAYLIST)
+//            )
+//            setSharedAxisYTransitions()
+//        }
 
-        binding.topPlayed.setOnClickListener {
-            findNavController().navigate(
-                R.id.detailListFragment,
-                bundleOf(EXTRA_PLAYLIST_TYPE to TOP_PLAYED_PLAYLIST)
-            )
-            setSharedAxisYTransitions()
-        }
+//        binding.topPlayed.setOnClickListener {
+//            findNavController().navigate(
+//                R.id.detailListFragment,
+//                bundleOf(EXTRA_PLAYLIST_TYPE to TOP_PLAYED_PLAYLIST)
+//            )
+//            setSharedAxisYTransitions()
+//        }
 
         binding.actionShuffle.setOnClickListener {
             libraryViewModel.shuffleSongs()
         }
 
-        binding.history.setOnClickListener {
-            findNavController().navigate(
-                R.id.detailListFragment,
-                bundleOf(EXTRA_PLAYLIST_TYPE to HISTORY_PLAYLIST)
-            )
-            setSharedAxisYTransitions()
+        binding.waveAnimation.setOnClickListener {
+            binding.waveAnimation.toggleAnimation()
         }
+
+        MusicPlayerRemote.pauseSong()
+
+//        binding.history.setOnClickListener {
+//            findNavController().navigate(
+//                R.id.detailListFragment,
+//                bundleOf(EXTRA_PLAYLIST_TYPE to HISTORY_PLAYLIST)
+//            )
+//            setSharedAxisYTransitions()
+//        }
 
 //        binding.userImage.setOnClickListener {
 //            findNavController().navigate(
@@ -193,10 +200,10 @@ class HomeFragment :
     }
 
     fun colorButtons() {
-        binding.history.elevatedAccentColor()
-        binding.lastAdded.elevatedAccentColor()
-        binding.topPlayed.elevatedAccentColor()
-        binding.actionShuffle.elevatedAccentColor()
+//        binding.history.elevatedAccentColor()
+//        binding.lastAdded.elevatedAccentColor()
+//        binding.topPlayed.elevatedAccentColor()
+        binding.actionShuffle.elevatedAccentColor(R.drawable.ic_play_arrow)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

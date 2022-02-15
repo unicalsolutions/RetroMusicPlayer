@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resourses>
+    <attr name="wavesViewStyle" format="reference" />
+
+    <declare-styleable name="WavesView">
+        <attr name="waveColor" format="color" />
+        <attr name="waveStrokeWidth" format="dimension" />
+        <attr name="waveGap" format="dimension" />
+    </declare-styleable>
+
+    <style name="Widget.WaveView" parent="@android:style/Widget">
+        <item name="waveStrokeWidth">1dp</item>
+        <item name="waveColor">#000</item>
+        <item name="waveGap">16dp</item>
+    </style>
+</resourses>

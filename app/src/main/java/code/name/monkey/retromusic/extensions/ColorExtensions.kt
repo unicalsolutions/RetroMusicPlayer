@@ -18,6 +18,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.widget.Button
 import android.widget.CheckBox
@@ -29,6 +30,7 @@ import androidx.annotation.ColorRes
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
@@ -45,6 +47,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.slider.Slider
 import com.google.android.material.textfield.TextInputLayout
+
 
 fun Int.ripAlpha(): Int {
     return ColorUtil.stripAlpha(this)
@@ -148,6 +151,20 @@ fun MaterialButton.accentOutlineColor() {
     setTextColor(colorStateList)
     rippleColor = colorStateList
 }
+
+fun FloatingActionButton.elevatedAccentColor(icon : Int) {
+    if (materialYou) return
+    val color = context.darkAccentColorVariant()
+    rippleColor = color
+    backgroundTintList = ColorStateList.valueOf(color)
+    setBackgroundColor(color)
+    val myFabSrc =
+        ResourcesCompat.getDrawable(context.resources, icon, null)
+    val willBeWhite = myFabSrc?.constantState!!.newDrawable()
+    willBeWhite.mutate().setColorFilter(context.accentColor(), PorterDuff.Mode.MULTIPLY)
+    setImageDrawable(willBeWhite)
+}
+
 
 fun MaterialButton.elevatedAccentColor() {
     if (materialYou) return
@@ -299,5 +316,5 @@ inline val @receiver:ColorInt Int.lighterColor
 inline val @receiver:ColorInt Int.darkerColor
     get() = ColorUtil.darkenColor(this)
 
-inline val Int.colorStateList : ColorStateList
+inline val Int.colorStateList: ColorStateList
     get() = ColorStateList.valueOf(this)

@@ -56,7 +56,7 @@ class LibraryViewModel(
     }
 
     private fun loadLibraryContent() = viewModelScope.launch(IO) {
-//        fetchHomeSections()
+        fetchHomeSections()
         fetchSuggestions()
         fetchSongs()
         fetchAlbums()
@@ -154,7 +154,7 @@ class LibraryViewModel(
             Songs -> fetchSongs()
             Albums -> fetchAlbums()
             Artists -> fetchArtists()
-//            HomeSections -> fetchHomeSections()
+            HomeSections -> fetchHomeSections()
             Playlists -> fetchPlaylists()
             Genres -> fetchGenres()
             Suggestions -> fetchSuggestions()

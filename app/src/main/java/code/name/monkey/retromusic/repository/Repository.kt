@@ -68,6 +68,9 @@ interface Repository {
     suspend fun topAlbumsHome(): Home
     suspend fun recentAlbumsHome(): Home
     suspend fun favoritePlaylistHome(): Home
+    suspend fun historyPlaylistHome(): Home
+    suspend fun lastAddedPlaylistHome(): Home
+    suspend fun topPlayedPlaylistHome(): Home
     suspend fun suggestionsHome(): Home
     suspend fun suggestions(): List<Song>
     suspend fun genresHome(): Home
@@ -241,11 +244,14 @@ class RealRepository(
     override suspend fun homeSections(): List<Home> {
         val homeSections = mutableListOf<Home>()
         val sections: List<Home> = listOf(
+            topPlayedPlaylistHome(),
+            historyPlaylistHome(),
+            lastAddedPlaylistHome(),
             topArtistsHome(),
             topAlbumsHome(),
             recentArtistsHome(),
             recentAlbumsHome(),
-            favoritePlaylistHome()
+            favoritePlaylistHome(),
         )
         for (section in sections) {
             if (section.arrayList.isNotEmpty()) {
@@ -413,6 +419,25 @@ class RealRepository(
             it.toSong()
         }
         return Home(songs, FAVOURITES, R.string.favorites)
+    }
+
+    override suspend fun historyPlaylistHome(): Home {
+        val songs = historySong().map {
+            it.toSong()
+        }
+        return Home(songs, HISTORY_PLAYLIST, R.string.history)
+    }
+
+    override suspend fun lastAddedPlaylistHome(): Home {
+        val songs = recentSongs()
+        return Home(songs, LAST_ADDED_PLAYLIST, R.string.last_added)
+    }
+
+    override suspend fun topPlayedPlaylistHome(): Home {
+        val songs = playCountSongs().map {
+            it.toSong()
+        }
+        return Home(songs, TOP_PLAYED_PLAYLIST, R.string.my_top_tracks)
     }
 
     override fun songsFlow(): Flow<Result<List<Song>>> = flow {

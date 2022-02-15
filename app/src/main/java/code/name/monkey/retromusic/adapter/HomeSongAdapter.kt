@@ -22,7 +22,6 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.os.bundleOf
-import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.findFragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
@@ -33,19 +32,14 @@ import code.name.monkey.retromusic.*
 import code.name.monkey.retromusic.adapter.album.AlbumAdapter
 import code.name.monkey.retromusic.adapter.artist.ArtistAdapter
 import code.name.monkey.retromusic.adapter.song.SongAdapter
-import code.name.monkey.retromusic.extensions.surfaceColor
 import code.name.monkey.retromusic.fragments.home.HomeFragment
-import code.name.monkey.retromusic.helper.MusicPlayerRemote
-import code.name.monkey.retromusic.interfaces.*
+import code.name.monkey.retromusic.interfaces.IAlbumClickListener
+import code.name.monkey.retromusic.interfaces.IArtistClickListener
+import code.name.monkey.retromusic.interfaces.IGenreClickListener
 import code.name.monkey.retromusic.model.*
 import code.name.monkey.retromusic.util.PreferenceUtil
-import code.name.monkey.retromusic.util.RetroColorUtil
-import com.afollestad.materialcab.attached.AttachedCab
-import com.afollestad.materialcab.attached.destroy
-import com.afollestad.materialcab.attached.isActive
-import com.afollestad.materialcab.createCab
 
-class HomeAdapter(
+class HomeSongAdapter(
     private val activity: AppCompatActivity
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), IArtistClickListener, IAlbumClickListener,
     IGenreClickListener {
@@ -57,20 +51,15 @@ class HomeAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val layout =
-            LayoutInflater.from(activity).inflate(R.layout.section_recycler_view, parent, false)
         val layoutHomeCategory =
             LayoutInflater.from(activity)
                 .inflate(R.layout.category_section_recycler_view, parent, false)
         return when (viewType) {
-            RECENT_ARTISTS, TOP_ARTISTS -> ArtistViewHolder(layout)
-            FAVOURITES -> PlaylistViewHolder(layout)
-            TOP_ALBUMS, RECENT_ALBUMS -> AlbumViewHolder(layout)
             HISTORY_PLAYLIST -> SongHistoryViewHolder(layoutHomeCategory)
             LAST_ADDED_PLAYLIST -> LastAddedViewHolder(layoutHomeCategory)
             TOP_PLAYED_PLAYLIST -> TopPlayedViewHolder(layoutHomeCategory)
             else -> {
-                ArtistViewHolder(layout)
+                SongHistoryViewHolder(layoutHomeCategory)
             }
         }
     }
@@ -81,7 +70,7 @@ class HomeAdapter(
             RECENT_ALBUMS -> {
                 val viewHolder = holder as AlbumViewHolder
                 viewHolder.bindView(home)
-                viewHolder.clickableArea?.setOnClickListener {
+                viewHolder.clickableArea.setOnClickListener {
                     it.findFragment<HomeFragment>().setSharedAxisXTransitions()
                     activity.findNavController(R.id.fragment_container).navigate(
                         R.id.detailListFragment,
@@ -92,7 +81,7 @@ class HomeAdapter(
             TOP_ALBUMS -> {
                 val viewHolder = holder as AlbumViewHolder
                 viewHolder.bindView(home)
-                viewHolder.clickableArea?.setOnClickListener {
+                viewHolder.clickableArea.setOnClickListener {
                     it.findFragment<HomeFragment>().setSharedAxisXTransitions()
                     activity.findNavController(R.id.fragment_container).navigate(
                         R.id.detailListFragment,
@@ -103,7 +92,7 @@ class HomeAdapter(
             RECENT_ARTISTS -> {
                 val viewHolder = holder as ArtistViewHolder
                 viewHolder.bindView(home)
-                viewHolder.clickableArea?.setOnClickListener {
+                viewHolder.clickableArea.setOnClickListener {
                     it.findFragment<HomeFragment>().setSharedAxisXTransitions()
                     activity.findNavController(R.id.fragment_container).navigate(
                         R.id.detailListFragment,
@@ -114,7 +103,7 @@ class HomeAdapter(
             TOP_ARTISTS -> {
                 val viewHolder = holder as ArtistViewHolder
                 viewHolder.bindView(home)
-                viewHolder.clickableArea?.setOnClickListener {
+                viewHolder.clickableArea.setOnClickListener {
                     it.findFragment<HomeFragment>().setSharedAxisXTransitions()
                     activity.findNavController(R.id.fragment_container).navigate(
                         R.id.detailListFragment,
@@ -125,7 +114,7 @@ class HomeAdapter(
             FAVOURITES -> {
                 val viewHolder = holder as PlaylistViewHolder
                 viewHolder.bindView(home)
-                viewHolder.clickableArea?.setOnClickListener {
+                viewHolder.clickableArea.setOnClickListener {
                     it.findFragment<HomeFragment>().setSharedAxisXTransitions()
                     activity.findNavController(R.id.fragment_container).navigate(
                         R.id.detailListFragment,
@@ -134,59 +123,35 @@ class HomeAdapter(
                 }
             }
             HISTORY_PLAYLIST -> {
-                val viewHolder = holder as SongHistoryViewHolder
+                val viewHolder = holder as PlaylistViewHolder
                 viewHolder.bindView(home)
-
-                viewHolder.play?.setOnClickListener {
-                    MusicPlayerRemote.openQueue(home.arrayList as MutableList<Song>, 0, true)
-                }
-                viewHolder.shuffle?.setOnClickListener {
-                    MusicPlayerRemote.openAndShuffleQueue(home.arrayList as MutableList<Song>, true)
-                }
-
-                viewHolder.clickableArea?.setOnClickListener {
+                viewHolder.clickableArea.setOnClickListener {
                     it.findFragment<HomeFragment>().setSharedAxisXTransitions()
                     activity.findNavController(R.id.fragment_container).navigate(
                         R.id.detailListFragment,
-                        bundleOf("type" to HISTORY_PLAYLIST)
+                        bundleOf("type" to FAVOURITES)
                     )
                 }
             }
             LAST_ADDED_PLAYLIST -> {
-                val viewHolder = holder as LastAddedViewHolder
+                val viewHolder = holder as PlaylistViewHolder
                 viewHolder.bindView(home)
-
-//                viewHolder.play.setOnClickListener {
-//                    MusicPlayerRemote.openQueue(home.arrayList as MutableList<Song>, 0, true)
-//                }
-//                viewHolder.shuffle.setOnClickListener {
-//                    MusicPlayerRemote.openAndShuffleQueue(home.arrayList as MutableList<Song>, true)
-//                }
-
-                viewHolder.clickableArea?.setOnClickListener {
+                viewHolder.clickableArea.setOnClickListener {
                     it.findFragment<HomeFragment>().setSharedAxisXTransitions()
                     activity.findNavController(R.id.fragment_container).navigate(
                         R.id.detailListFragment,
-                        bundleOf("type" to LAST_ADDED_PLAYLIST)
+                        bundleOf("type" to FAVOURITES)
                     )
                 }
             }
             TOP_PLAYED_PLAYLIST -> {
-                val viewHolder = holder as TopPlayedViewHolder
+                val viewHolder = holder as PlaylistViewHolder
                 viewHolder.bindView(home)
-
-                viewHolder.play?.setOnClickListener {
-                    MusicPlayerRemote.openQueue(home.arrayList as MutableList<Song>, 0, true)
-                }
-                viewHolder.shuffle?.setOnClickListener {
-                    MusicPlayerRemote.openAndShuffleQueue(home.arrayList as MutableList<Song>, true)
-                }
-
-                viewHolder.clickableArea?.setOnClickListener {
+                viewHolder.clickableArea.setOnClickListener {
                     it.findFragment<HomeFragment>().setSharedAxisXTransitions()
                     activity.findNavController(R.id.fragment_container).navigate(
                         R.id.detailListFragment,
-                        bundleOf("type" to TOP_PLAYED_PLAYLIST)
+                        bundleOf("type" to FAVOURITES)
                     )
                 }
             }
@@ -205,8 +170,8 @@ class HomeAdapter(
 
     private inner class AlbumViewHolder(view: View) : AbsHomeViewItem(view) {
         fun bindView(home: Home) {
-            title?.setText(home.titleRes)
-            recyclerView?.apply {
+            title.setText(home.titleRes)
+            recyclerView.apply {
                 adapter = albumAdapter(home.arrayList as List<Album>)
                 layoutManager = gridLayoutManager()
             }
@@ -215,8 +180,8 @@ class HomeAdapter(
 
     private inner class ArtistViewHolder(view: View) : AbsHomeViewItem(view) {
         fun bindView(home: Home) {
-            title?.setText(home.titleRes)
-            recyclerView?.apply {
+            title.setText(home.titleRes)
+            recyclerView.apply {
                 layoutManager = linearLayoutManager()
                 adapter = artistsAdapter(home.arrayList as List<Artist>)
             }
@@ -225,53 +190,38 @@ class HomeAdapter(
 
     private inner class SongHistoryViewHolder(view: View) : AbsHomeViewItem(view) {
         fun bindView(home: Home) {
-            title?.setText(home.titleRes)
-            recyclerView?.apply {
+            title.setText(home.titleRes)
+            recyclerView.apply {
                 layoutManager = linearLayoutManager()
-                val songAdapter = SongAdapter(
-                    context as FragmentActivity,
-                    (home.arrayList as List<Song>).toMutableList(),
-                    R.layout.item_little_card, null
-                )
-                adapter = songAdapter
+                adapter = artistsAdapter(home.arrayList as List<Artist>)
             }
         }
     }
 
     private inner class TopPlayedViewHolder(view: View) : AbsHomeViewItem(view) {
         fun bindView(home: Home) {
-            title?.setText(home.titleRes)
-            recyclerView?.apply {
+            title.setText(home.titleRes)
+            recyclerView.apply {
                 layoutManager = linearLayoutManager()
-                val songAdapter = SongAdapter(
-                    context as FragmentActivity,
-                    (home.arrayList as List<Song>).toMutableList(),
-                    R.layout.item_little_card, null
-                )
-                adapter = songAdapter
+                adapter = artistsAdapter(home.arrayList as List<Artist>)
             }
         }
     }
 
     private inner class LastAddedViewHolder(view: View) : AbsHomeViewItem(view) {
         fun bindView(home: Home) {
-            title?.setText(home.titleRes)
-            recyclerView?.apply {
+            title.setText(home.titleRes)
+            recyclerView.apply {
                 layoutManager = linearLayoutManager()
-                val songAdapter = SongAdapter(
-                    context as FragmentActivity,
-                    (home.arrayList as List<Song>).toMutableList(),
-                    R.layout.item_little_card, null
-                )
-                adapter = songAdapter
+                adapter = artistsAdapter(home.arrayList as List<Artist>)
             }
         }
     }
 
     private inner class PlaylistViewHolder(view: View) : AbsHomeViewItem(view) {
         fun bindView(home: Home) {
-            title?.setText(home.titleRes)
-            recyclerView?.apply {
+            title.setText(home.titleRes)
+            recyclerView.apply {
                 val songAdapter = SongAdapter(
                     activity,
                     home.arrayList as MutableList<Song>,
@@ -284,12 +234,10 @@ class HomeAdapter(
     }
 
     open class AbsHomeViewItem(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val recyclerView: RecyclerView? = itemView.findViewById(R.id.recyclerView)
-        val title: AppCompatTextView? = itemView.findViewById(R.id.title)
-        val arrow: ImageView? = itemView.findViewById(R.id.arrow)
-        val play: ImageView? = itemView.findViewById(R.id.play)
-        val shuffle: ImageView? = itemView.findViewById(R.id.shuffle)
-        val clickableArea: ViewGroup? = itemView.findViewById(R.id.clickable_area)
+        val recyclerView: RecyclerView = itemView.findViewById(R.id.recyclerView)
+        val title: AppCompatTextView = itemView.findViewById(R.id.title)
+        val arrow: ImageView = itemView.findViewById(R.id.arrow)
+        val clickableArea: ViewGroup = itemView.findViewById(R.id.clickable_area)
     }
 
     private fun artistsAdapter(artists: List<Artist>) =
