@@ -20,6 +20,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.contains
 import androidx.navigation.ui.setupWithNavController
@@ -62,9 +63,9 @@ class MainActivity : AbsCastActivity(), OnSharedPreferenceChangeListener {
         if (!hasPermissions()) {
             findNavController(R.id.fragment_container).navigate(R.id.permissionFragment)
         }
-        if (BuildConfig.VERSION_CODE > PreferenceUtil.lastVersion && !BuildConfig.DEBUG) {
-            NavigationUtil.gotoWhatNews(this)
-        }
+//        if (BuildConfig.VERSION_CODE > PreferenceUtil.lastVersion && !BuildConfig.DEBUG) {
+//            NavigationUtil.gotoWhatNews(this)
+//        }
     }
 
     private fun setupNavigationController() {

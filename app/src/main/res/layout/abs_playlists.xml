@@ -49,18 +49,6 @@
     <!--        app:layout_constraintStart_toStartOf="@+id/history"-->
     <!--        app:layout_constraintTop_toBottomOf="@+id/history" />-->
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/actionShuffle"
-        style="@style/HomeActionButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:icon="@drawable/ic_shuffle"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="ContentDescription" />
-
     <code.name.monkey.retromusic.views.WavesView
         android:id="@+id/waveAnimation"
         style="@style/Widget.WaveView"
@@ -71,8 +59,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:waveGap="40dp"
+        app:waveGap="30dp"
         app:waveStrokeWidth="2dp" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/actionShuffle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/roundSelector"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_play_arrow"
+        tools:tint="@color/md_black_1000" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

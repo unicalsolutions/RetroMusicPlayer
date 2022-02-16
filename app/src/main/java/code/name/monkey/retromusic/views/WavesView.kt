@@ -14,6 +14,7 @@ import code.name.monkey.retromusic.helper.MusicPlayerRemote
 import code.name.monkey.retromusic.util.MusicUtil
 import code.name.monkey.retromusic.util.TiltListener
 import code.name.monkey.retromusic.util.WaveTiltSensor
+import java.util.*
 import kotlin.math.cos
 import kotlin.math.hypot
 import kotlin.math.sin
@@ -41,6 +42,8 @@ class WavesView @JvmOverloads constructor(
 
     private val gradientMatrix = Matrix()
 
+    val rand = Random()
+
     private val tiltSensor = WaveTiltSensor(context)
 
     private val gradientPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -67,7 +70,7 @@ class WavesView @JvmOverloads constructor(
 
     init {
         val attrs = context.obtainStyledAttributes(attrs, R.styleable.WavesView, defStyleAttr, 0)
-        //init paint with custom attrs
+
         wavePaint = Paint(ANTI_ALIAS_FLAG).apply {
             color = attrs.getColor(R.styleable.WavesView_waveColor, 0)
             strokeWidth = attrs.getDimension(R.styleable.WavesView_waveStrokeWidth, 0f)
@@ -90,32 +93,19 @@ class WavesView @JvmOverloads constructor(
         waveAnimator?.pause()
     }
 
-    fun toggleAnimation() {
-        if (waveAnimator?.isRunning == true) {
-            if (waveAnimator?.isPaused == true) {
-                waveAnimator?.resume()
-            } else {
-                waveAnimator?.pause()
-            }
-        } else {
-            if (waveAnimator?.isStarted == true) {
-                waveAnimator?.resume()
-            } else {
-                waveAnimator?.start()
-            }
-        }
+    fun cancelAnimation() {
+        waveAnimator?.cancel()
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         waveAnimator = ValueAnimator.ofFloat(0f, waveGap).apply {
             addUpdateListener {
-                waveRadiusOffset = it.animatedValue as Float
+                waveRadiusOffset = it.animatedValue as Float // + rand.nextInt(50)
             }
             duration = 1500L
             repeatMode = ValueAnimator.RESTART
             repeatCount = ValueAnimator.INFINITE
-            interpolator = BounceInterpolator()
 //            start()
         }
         tiltSensor.addListener(this)
@@ -132,7 +122,7 @@ class WavesView @JvmOverloads constructor(
         //set the center of all circles to be center of the view
         center.set(w / 2f, h / 2f)
         maxRadius = hypot(center.x.toDouble(), center.y.toDouble()).toFloat()
-        initialRadius = w / waveGap
+        initialRadius = 70f
 
         gradientPaint.shader = RadialGradient(
             center.x, center.y, maxRadius,
@@ -140,11 +130,17 @@ class WavesView @JvmOverloads constructor(
         )
     }
 
+    fun setAnimExpanding(bool: Boolean) {
+        if ((10 - rand.nextInt(10)) > 0)
+            waveAnimator?.reverse()
+        else
+            waveAnimator?.reverse()
+    }
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
         //draw circles separated by a space the size of waveGap
-
         var currentRadius = initialRadius + waveRadiusOffset
         while (currentRadius < maxRadius) {
             canvas.drawCircle(center.x, center.y, currentRadius, wavePaint)

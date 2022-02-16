@@ -42,7 +42,7 @@ android {
         }
     }
 
-    buildFeatures{
+    buildFeatures {
         viewBinding true
     }
     packagingOptions {

@@ -14,6 +14,9 @@
  */
 package code.name.monkey.retromusic.fragments.home
 
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -21,20 +24,20 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.MenuItem.SHOW_AS_ACTION_IF_ROOM
 import android.view.View
+import android.view.animation.LinearInterpolator
 import androidx.activity.addCallback
-import androidx.core.os.bundleOf
+import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.view.doOnLayout
 import androidx.core.view.doOnPreDraw
-import androidx.core.view.isVisible
-import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import code.name.monkey.appthemehelper.ThemeStore
 import code.name.monkey.appthemehelper.common.ATHToolbarActivity
-import code.name.monkey.appthemehelper.util.ColorUtil
 import code.name.monkey.appthemehelper.util.ToolbarContentTintHelper
-import code.name.monkey.retromusic.*
+import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.adapter.HomeAdapter
 import code.name.monkey.retromusic.databinding.FragmentHomeBinding
 import code.name.monkey.retromusic.dialogs.CreatePlaylistDialog
@@ -44,22 +47,26 @@ import code.name.monkey.retromusic.extensions.drawNextToNavbar
 import code.name.monkey.retromusic.extensions.elevatedAccentColor
 import code.name.monkey.retromusic.fragments.ReloadType
 import code.name.monkey.retromusic.fragments.base.AbsMainActivityFragment
-import code.name.monkey.retromusic.glide.GlideApp
-import code.name.monkey.retromusic.glide.RetroGlideExtension
 import code.name.monkey.retromusic.helper.MusicPlayerRemote
+import code.name.monkey.retromusic.interfaces.IMusicServiceEventListener
 import code.name.monkey.retromusic.interfaces.IScrollHelper
 import code.name.monkey.retromusic.model.Song
-import code.name.monkey.retromusic.util.PreferenceUtil
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.transition.MaterialFadeThrough
 import com.google.android.material.transition.MaterialSharedAxis
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
 
 class HomeFragment :
-    AbsMainActivityFragment(R.layout.fragment_home), IScrollHelper {
+    AbsMainActivityFragment(R.layout.fragment_home), IScrollHelper, IMusicServiceEventListener {
 
     private var _binding: HomeBinding? = null
     private val binding get() = _binding!!
+
+    private var jobVisualizer: Job? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -101,9 +108,57 @@ class HomeFragment :
         view.doOnLayout {
             adjustPlaylistButtons()
         }
+
+        val scaleDown: ObjectAnimator = ObjectAnimator.ofPropertyValuesHolder(
+            binding.actionShuffle,
+            PropertyValuesHolder.ofFloat("scaleX", 1.2f),
+            PropertyValuesHolder.ofFloat("scaleY", 1.2f)
+        )
+        scaleDown.interpolator = FastOutSlowInInterpolator()
+        scaleDown.duration = 1000
+
+        scaleDown.repeatCount = ObjectAnimator.INFINITE
+        scaleDown.repeatMode = ObjectAnimator.REVERSE
+
+        scaleDown.start()
     }
 
+    override fun onPlayStateChanged() {
+        super.onPlayStateChanged()
+        jobVisualizer?.cancel()
+        binding.waveAnimation.cancelAnimation()
+        binding.actionShuffle.backgroundTintList =
+            ColorStateList.valueOf(requireContext().accentColor())
+        jobVisualizer = viewLifecycleOwner.lifecycleScope.launch {
+            if (!MusicPlayerRemote.isPlaying) {
+                binding.actionShuffle.animate().setDuration(1).setInterpolator(LinearInterpolator())
+                    .scaleX(0.5f).scaleY(0.5f).start()
+            }
+            binding.waveAnimation.playAnimation()
+            while (MusicPlayerRemote.isPlaying) {
+                binding.actionShuffle.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.ic_pause
+                    )
+                )
+                binding.waveAnimation.setAnimExpanding(true)
+                delay(1000)
+            }
+            binding.actionShuffle.setImageDrawable(
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    R.drawable.ic_play_arrow
+                )
+            )
+            binding.waveAnimation.pauseAnimation()
+        }
+    }
+
+
     private fun adjustPlaylistButtons() {
+        binding.actionShuffle.backgroundTintList =
+            ColorStateList.valueOf(requireContext().accentColor())
         val buttons =
             listOf(binding.actionShuffle)
 //        buttons.maxOf { it.lineCount }.let { maxLineCount ->
@@ -141,14 +196,15 @@ class HomeFragment :
 //        }
 
         binding.actionShuffle.setOnClickListener {
-            libraryViewModel.shuffleSongs()
+            if (!MusicPlayerRemote.isPlaying)
+                libraryViewModel.shuffleSongs()
+            else
+                MusicPlayerRemote.pauseSong()
         }
 
         binding.waveAnimation.setOnClickListener {
-            binding.waveAnimation.toggleAnimation()
+//            binding.waveAnimation.toggleAnimation()
         }
-
-        MusicPlayerRemote.pauseSong()
 
 //        binding.history.setOnClickListener {
 //            findNavController().navigate(
@@ -204,6 +260,7 @@ class HomeFragment :
 //        binding.lastAdded.elevatedAccentColor()
 //        binding.topPlayed.elevatedAccentColor()
         binding.actionShuffle.elevatedAccentColor(R.drawable.ic_play_arrow)
+//        binding.actionShuffle.imageTintList = ColorStateList.valueOf(requireContext().accentColor())
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
