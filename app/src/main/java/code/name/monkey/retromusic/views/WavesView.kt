@@ -4,15 +4,11 @@ import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
 import android.graphics.Paint.ANTI_ALIAS_FLAG
-import android.media.MediaPlayer
 import android.util.AttributeSet
 import android.view.View
 import android.view.animation.*
 import code.name.monkey.appthemehelper.ThemeStore
 import code.name.monkey.retromusic.R
-import code.name.monkey.retromusic.helper.MusicPlayerRemote
-import code.name.monkey.retromusic.util.MusicUtil
-import code.name.monkey.retromusic.util.TiltListener
 import code.name.monkey.retromusic.util.WaveTiltSensor
 import java.util.*
 import kotlin.math.cos
@@ -29,7 +25,7 @@ class WavesView @JvmOverloads constructor(
     attrs: AttributeSet,
     defStyleAttr: Int = R.attr.wavesViewStyle
 ) :
-    View(context, attrs, defStyleAttr), TiltListener {
+    View(context, attrs, defStyleAttr) {
 
     private val wavePaint: Paint
     private val waveGap: Float
@@ -43,8 +39,6 @@ class WavesView @JvmOverloads constructor(
     private val gradientMatrix = Matrix()
 
     val rand = Random()
-
-    private val tiltSensor = WaveTiltSensor(context)
 
     private val gradientPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         // Highlight only the areas already touched on the canvas
@@ -108,13 +102,10 @@ class WavesView @JvmOverloads constructor(
             repeatCount = ValueAnimator.INFINITE
 //            start()
         }
-        tiltSensor.addListener(this)
-        tiltSensor.register()
     }
 
     override fun onDetachedFromWindow() {
         waveAnimator?.cancel()
-        tiltSensor.unregister()
         super.onDetachedFromWindow()
     }
 
@@ -204,16 +195,16 @@ class WavesView @JvmOverloads constructor(
         postInvalidateOnAnimation()
     }
 
-    override fun onTilt(pitchRollRad: Pair<Double, Double>) {
-        val pitchRad = pitchRollRad.first
-        val rollRad = pitchRollRad.second
-
-        val maxYOffset = center.y.toDouble()
-        val maxXOffset = center.x.toDouble()
-
-        val yOffset = (sin(pitchRad) * maxYOffset)
-        val xOffset = (sin(rollRad) * maxXOffset)
-
+//    override fun onTilt(pitchRollRad: Pair<Double, Double>) {
+//        val pitchRad = pitchRollRad.first
+//        val rollRad = pitchRollRad.second
+//
+//        val maxYOffset = center.y.toDouble()
+//        val maxXOffset = center.x.toDouble()
+//
+//        val yOffset = (sin(pitchRad) * maxYOffset)
+//        val xOffset = (sin(rollRad) * maxXOffset)
+//
 //        updateGradient(xOffset.toFloat() + center.x, yOffset.toFloat() + center.y)
-    }
+//    }
 }
